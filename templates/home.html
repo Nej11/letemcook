@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Recipe App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            margin-top: 100px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .btn {
+            width: 250px;
+            margin: 15px;
+        }
+    </style>
+</head>
+<body>    
+    <img src="mealbg.jpg" alt="white">
+    <div class="container">
+        <h1>Welcome to My App</h1>
+        <p>Choose an option below:</p>
+        <a href="{{ url_for('generate_recipe') }}" class="btn btn-primary">🍽️ Generate Recipes</a>
+        <a href="{{ url_for('other_app') }}" class="btn btn-secondary">📷 Go to Webcam</a>
+    </div>
+</body>
+</html>
