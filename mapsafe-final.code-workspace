@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"name": "mapsafe-final",
+			"path": "../../mapsafe-final"
+		},
+		{
+			"name": "mapsafe",
+			"path": "../../mapsafe"
+		},
+		{
+			"name": "ms",
+			"path": "../../ms"
+		},
+		{
+			"path": "../../iot"
+		},
+		{
+			"path": "../../Task-manager"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "letemcook"
+	}
+}

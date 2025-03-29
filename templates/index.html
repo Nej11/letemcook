@@ -6,13 +6,29 @@
     <title>Recipe Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* Full-screen background */
+        body {
+            background: url("{{ url_for('static', filename='./mealbg.jpg') }}") ;
+            background-size: cover;
+        }
+
+        /* Transparent container */
+        .content-box {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
         .recipe-output {
             white-space: pre-wrap;
-            background-color: #f8f9fa;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: rgb(240, 227, 181);
             padding: 20px;
             border-radius: 5px;
             margin-top: 20px;
         }
+
         .advanced-options {
             display: none;
             margin-top: 15px;
@@ -20,78 +36,82 @@
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="mb-4">Recipe Generator</h1>
-        <p>Enter the ingredients you have, separated by commas, and we'll suggest recipes!</p>
-        
-        <form method="POST" id="recipeForm">
-            <div class="mb-3">
-                <label for="ingredients" class="form-label">Your Ingredients (Required)</label>
-                <input type="text" class="form-control" id="ingredients" name="ingredients" 
-                       value="{{ ingredients if ingredients else '' }}" required
-                       placeholder="e.g., chicken, rice, tomatoes, onions">
-            </div>
-            
-            <div class="form-check mb-3">
-                <input type="checkbox" class="form-check-input" id="toggleAdvanced">
-                <label class="form-check-label" for="toggleAdvanced">Advanced Options</label>
-            </div>
+    <!--img src="../static/mealbg.jpg" alt="Meal"-->
 
-            <div class="advanced-options" id="advancedOptions">
-                <div class="mb-3">
-                    <label for="meal_type" class="form-label">Meal Type (Optional)</label>
-                    <select class="form-control" id="meal_type" name="meal_type">
-                        <option value="" selected>-- Select Meal Type --</option>
-                        <option value="Breakfast">Breakfast</option>
-                        <option value="Lunch">Lunch</option>
-                        <option value="Snacks">Snacks</option>
-                        <option value="Dinner">Dinner</option>
-                    </select>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="cuisine" class="form-label">Cuisine Preference (Optional)</label>
-                    <select class="form-control" id="cuisine" name="cuisine">
-                        <option value="" selected>-- Select Cuisine --</option>
-                        <option value="Italian">Italian</option>
-                        <option value="Indian">Indian</option>
-                        <option value="Chinese">Chinese</option>
-                        <option value="Continental">Continental</option>
-                        <option value="Thai">Thai</option>
-                    </select>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="cooking_time" class="form-label">Cooking Time (Optional)</label>
-                    <select class="form-control" id="cooking_time" name="cooking_time">
-                        <option value="" selected>-- Select Cooking Time --</option>
-                        <option value="Immediate (<10 min)">Immediate (&lt;10 min)</option>
-                        <option value="10-30 min">10-30 min</option>
-                        <option value="30+ min">30+ min</option>
-                    </select>
-                </div>
-            </div>
+    <div class="container mt-5">
+        <div class="content-box">
+            <h1 class="mb-4">Recipe Generator</h1>
+            <p>Enter the ingredients you have, separated by commas, and we'll suggest recipes!</p>
             
-            <button type="submit" class="btn btn-primary">Generate Recipes</button>
-        </form>
-        
-        {% if error %}
-            <div class="alert alert-danger mt-3">{{ error }}</div>
-        {% endif %}
-        
-        {% if recipes %}
-            <div class="mt-4" id="recipeContainer">
-                <h3>Suggested Recipes</h3>
-                <div class="recipe-output" id="recipeOutput">
-                    {{ recipes|safe }}
+            <form method="POST" id="recipeForm">
+                <div class="mb-3">
+                    <label for="ingredients" class="form-label">Your Ingredients (Required)</label>
+                    <input type="text" class="form-control" id="ingredients" name="ingredients" 
+                        value="{{ ingredients if ingredients else '' }}" required
+                        placeholder="e.g., chicken, rice, tomatoes, onions">
                 </div>
-                <div class="mt-3">
-                    <button class="btn btn-secondary" id="prevRecipes" disabled>Previous</button>
-                    <button class="btn btn-secondary" id="generateMore">Generate More</button>
-                    <button class="btn btn-secondary" id="nextRecipes" disabled>Next</button>
+                
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="toggleAdvanced">
+                    <label class="form-check-label" for="toggleAdvanced">Advanced Options</label>
                 </div>
-            </div>
-        {% endif %}
+
+                <div class="advanced-options" id="advancedOptions">
+                    <div class="mb-3">
+                        <label for="meal_type" class="form-label">Meal Type (Optional)</label>
+                        <select class="form-control" id="meal_type" name="meal_type">
+                            <option value="" selected>-- Select Meal Type --</option>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Snacks">Snacks</option>
+                            <option value="Dinner">Dinner</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="cuisine" class="form-label">Cuisine Preference (Optional)</label>
+                        <select class="form-control" id="cuisine" name="cuisine">
+                            <option value="" selected>-- Select Cuisine --</option>
+                            <option value="Italian">Italian</option>
+                            <option value="Indian">Indian</option>
+                            <option value="Chinese">Chinese</option>
+                            <option value="Continental">Continental</option>
+                            <option value="Thai">Thai</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="cooking_time" class="form-label">Cooking Time (Optional)</label>
+                        <select class="form-control" id="cooking_time" name="cooking_time">
+                            <option value="" selected>-- Select Cooking Time --</option>
+                            <option value="Immediate (<10 min)">Immediate (&lt;10 min)</option>
+                            <option value="10-30 min">10-30 min</option>
+                            <option value="30+ min">30+ min</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-success">Generate Recipes</button>
+            </form>
+            
+            {% if error %}
+                <div class="alert alert-danger mt-3">{{ error }}</div>
+            {% endif %}
+            
+            {% if recipes %}
+                <div class="mt-4" id="recipeContainer">
+                    <h3>Suggested Recipes</h3>
+                    <div class="recipe-output" id="recipeOutput">
+                        {{ recipes|safe }}
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-secondary" id="prevRecipes" disabled>Previous</button>
+                        <button class="btn btn-success" id="generateMore">Generate More</button>
+                        <button class="btn btn-secondary" id="nextRecipes" disabled>Next</button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,7 +1,8 @@
 import os
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify,redirect
 import google.generativeai as genai
 from dotenv import load_dotenv
+import webbrowser
 
 # Load environment variables
 load_dotenv()
@@ -17,7 +18,8 @@ if not GEMINI_API_KEY:
 # Configure Gemini API
 try:
     genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-1.5-pro')
+
 except Exception as e:
     print(f"❌ API Initialization Error: {e}")
     model = None
@@ -26,8 +28,9 @@ def generate_recipes(ingredients):
     """Generates 3 new recipes based on provided ingredients."""
     if not model:
         return "⚠️ Recipe service is unavailable. Please try again later."
-    
+
     prompt = f"""Generate 3 new and unique detailed recipes using primarily these ingredients: {', '.join(ingredients)}.
+     
     For each recipe, provide:
     1. Name (🌟 Creative title)
     2. Prep Time / Cook Time
@@ -46,12 +49,10 @@ def generate_recipes(ingredients):
         print(f"❌ Recipe Generation Error: {e}")
         return "⚠️ Recipe generation failed. Please try different ingredients."
 
-# Home Page Route
 @app.route("/")
 def home():
     return render_template("home.html")
 
-# Recipe Generator Page
 @app.route("/generate_recipe", methods=['GET', 'POST'])
 def generate_recipe():
     recipes = None
@@ -60,17 +61,12 @@ def generate_recipe():
     if request.method == 'POST':
         ingredients = request.form.get('ingredients', '').strip()
         if not ingredients:
-            return render_template('index.html', error="⚠️ Please enter some ingredients.")
+            return render_template('generate_recipe.html', error="⚠️ Please enter some ingredients.")
 
         ingredient_list = [i.strip() for i in ingredients.split(',') if i.strip()]
         recipes = generate_recipes(ingredient_list)
     
     return render_template('index.html', recipes=recipes, ingredients=ingredients)
-
-# Placeholder for Another App
-@app.route("/other_app")
-def other_app():
-    return "<h1>Welcome to the Other App!</h1><p>This is another application.</p>"
 
 @app.route("/generate_more", methods=['POST'])
 def generate_more():
@@ -83,6 +79,25 @@ def generate_more():
     more_recipes = generate_recipes(ingredient_list)
 
     return jsonify({"new_recipes": more_recipes})
+
+@app.route("/streamlit")
+def open_streamlit():
+    
+    streamlit_url = "http://localhost:8501"  # Update if using a different port
+    webbrowser.open(streamlit_url)  # Open Streamlit in the browser
+    return f"Streamlit app should open at <a href='{streamlit_url}' target='_blank'>{streamlit_url}</a>"
+
+def receive_data():
+    data = request.get_json()
+    ingredients = data.get("ingredients", [])
+
+    if not ingredients:
+        return jsonify({"error": "No ingredients received"}), 400
+
+    print("Received ingredients:", ingredients)
+
+    # Redirect to the home page with ingredients (modify according to your app's logic)
+    return jsonify({"message": "Ingredients received", "redirect_url": "/"})
 
 if __name__ == '__main__':
     app.run(debug=True)
